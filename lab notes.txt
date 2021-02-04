@@ -1,0 +1,7 @@
+
+Works:
+
+dir
+
+To fix:
+does not handle more than one input
