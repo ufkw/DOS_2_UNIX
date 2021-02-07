@@ -5,29 +5,42 @@
 
 int main(void) 
 {
-    char * command = malloc(10*sizeof(char));
-    char * arg1 = malloc(500*sizeof(char));
-    char * arg2 = malloc(500*sizeof(char));
+    // char * command = malloc(10*sizeof(char));
+    // char * arg1 = malloc(500*sizeof(char));
+    // char * arg2 = malloc(500*sizeof(char));
 
-    memset(command, '\0', sizeof(command));
-    memset(arg1, '\0', sizeof(arg1));
-    memset(arg2, '\0', sizeof(arg2));
+    char command[10];
+    char arg1[200];
+    char arg2[200];
+
+
+    
 
     // char * arg1 = NULL;
     // char * arg2 = NULL;
 
-    char * input = malloc(sizeof(command) + sizeof(arg1) + sizeof(arg2));
-    memset(input, '\0', sizeof(input));
+    char input[500];//* input = malloc(sizeof(command) + sizeof(arg1) + sizeof(arg2));
+    char input_cpy[500];
     while(1)
     {
+        memset(command, '\0', sizeof(command));
+        memset(arg1, '\0', sizeof(arg1));
+        memset(arg2, '\0', sizeof(arg2));    
+        memset(input, '\0', sizeof(input));
         //get input
-        scanf("%s", input);
-        
+        fgets(input, 501, stdin);
+    //    scanf("%s", input);
+        const char check[] = "\n";
+        int len = strcspn(input, check);
+        printf("len = |%d|\n");
+        strncpy(input_cpy,input, len);
+        printf("input_cpy = |%s|\n", input_cpy);
+    //    input = strtok(input, "\n");
         // run infinitely
 
 
 
-        if(input[0] != '\0')
+        if(input_cpy[0] != '\0')
         {
             //if input exists
             int pid = fork();    //create child thread
@@ -35,22 +48,30 @@ int main(void)
             if(pid == 0)
             {
                 //child process
+                printf("in child process\n");
 
 
                 //tokenize input into command, arg1, arg2
-                char * token;
-                token = strtok(input, " ");
-                
+                // char * tmp = malloc(sizeof(input));
+                // memset(tmp, '\0', sizeof(tmp));
+                // strcpy(tmp, input);
 
+                printf("input = |%s|\n", input_cpy);
+
+                const char delim[1] = " ";
+                char * token = strtok(input_cpy, " ");
+                strcpy(command, token);
+                printf("1.command: |%s|\n", command);
+                printf("2.token |%s|\n", token);
                 int count = 0;
 
                 while(token != NULL)
                 {
-                    if(count == 0)
-                    {
-                        strcpy(command, token);
-                    }
-                    else if(count == 1)
+                    // if(count == 0)
+                    // {
+                    //     strcpy(command, token);
+                    // }
+                    if(count == 1)
                     {
                         strcpy(arg1, token);
                     }
@@ -59,9 +80,16 @@ int main(void)
                         strcpy(arg2, token);
                     }
 
+                    printf("count: %d\n", count);
                     printf( "token: %s\n", token );
-                    token = strtok(NULL, " ");
                     count++;
+                    
+                    token = strtok(NULL, " ");
+                    // strcpy(tmp, input);
+                    // token = strtok(tmp, delim);
+                    printf( "next token: %s\n", token );
+                    
+                    
                 }
 
                 printf("command: %s\n", command);
@@ -73,7 +101,7 @@ int main(void)
                 if(command[0] == 'c' && command[1] == 'd')          //cd to cd
                 {
                     memset(command, '\0', sizeof(command));
-                    command = "cd";
+                    strcpy(command, "cd");
                     execlp("/bin/cd", "cd", arg1);
 
 
@@ -81,29 +109,30 @@ int main(void)
                 else if(strcmp(command, "dir") == 0) 
                 {
                     memset(command, '\0', sizeof(command));
-                    command = "ls";
+                    strcpy(command, "ls");
 
                     execlp("/bin/ls", "ls", NULL);
                 }
                 else if(strcmp(command, "type") == 0)
                 {
                     memset(command, '\0', sizeof(command));
-                    command = "cat";
+                    strcpy(command,"cat");
                 }
                 else if(strcmp(command, "del") == 0)
                 {
                     memset(command, '\0', sizeof(command));
-                    command = "rm";
+                    strcpy(command,"rm");
+                   
                 }
                 else if(strcmp(command, "ren") == 0)
                 {
                     memset(command, '\0', sizeof(command));
-                    command = "mv";
+                    strcpy(command,"mv");
                 }
                 else if(strcmp(command, "copy") == 0)
                 {
                     memset(command, '\0', sizeof(command));
-                    command = "cp";   
+                    strcpy(command,"cp"); 
    
                 }
                 // else if(strcmp(command, 0x03) == 0)
@@ -143,7 +172,7 @@ int main(void)
             {
                 // parent process
                 wait(NULL);
-                printf("Child complete");
+                printf("Child complete\n");
             }
         }
 

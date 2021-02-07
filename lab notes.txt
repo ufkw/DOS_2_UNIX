@@ -2,6 +2,7 @@
 Works:
 
 dir
+tokenizes correctly
 
 To fix:
-does not handle more than one input
+add proper exec functions
