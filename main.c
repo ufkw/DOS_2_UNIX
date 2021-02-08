@@ -27,12 +27,13 @@ int main(void)
         memset(arg1, '\0', sizeof(arg1));
         memset(arg2, '\0', sizeof(arg2));    
         memset(input, '\0', sizeof(input));
+        memset(input_cpy, '\0', sizeof(input));
         //get input
         fgets(input, 501, stdin);
     //    scanf("%s", input);
         const char check[] = "\n";
         int len = strcspn(input, check);
-        printf("len = |%d|\n");
+    //    printf("len = |%d|\n");
         strncpy(input_cpy,input, len);
         printf("input_cpy = |%s|\n", input_cpy);
     //    input = strtok(input, "\n");
@@ -45,6 +46,15 @@ int main(void)
             //if input exists
             int pid = fork();    //create child thread
 
+            char cwd[256];
+            
+            if(getcwd(cwd,sizeof(cwd)) == NULL)
+            {
+                //error
+                
+            }
+
+
             if(pid == 0)
             {
                 //child process
@@ -56,13 +66,13 @@ int main(void)
                 // memset(tmp, '\0', sizeof(tmp));
                 // strcpy(tmp, input);
 
-                printf("input = |%s|\n", input_cpy);
+           //     printf("input_cpy = |%s|\n", input_cpy);
 
                 const char delim[1] = " ";
                 char * token = strtok(input_cpy, " ");
                 strcpy(command, token);
-                printf("1.command: |%s|\n", command);
-                printf("2.token |%s|\n", token);
+                // printf("1.command: |%s|\n", command);
+                // printf("2.token |%s|\n", token);
                 int count = 0;
 
                 while(token != NULL)
@@ -80,34 +90,75 @@ int main(void)
                         strcpy(arg2, token);
                     }
 
-                    printf("count: %d\n", count);
-                    printf( "token: %s\n", token );
+                //    printf("count: %d\n", count);
+                //    printf( "token: %s\n", token );
                     count++;
                     
                     token = strtok(NULL, " ");
                     // strcpy(tmp, input);
                     // token = strtok(tmp, delim);
-                    printf( "next token: %s\n", token );
+                 //   printf( "next token: %s\n", token );
                     
                     
                 }
 
-                printf("command: %s\n", command);
-                printf("arg1: %s\n", arg1);
-                printf("arg2: %s\n", arg2);
+                // printf("command: %s\n", command);
+                // printf("arg1: %s\n", arg1);
+                // printf("arg2: %s\n", arg2);
+
 
 
                 //new thread converts and executes command
                 if(command[0] == 'c' && command[1] == 'd')          //cd to cd
                 {
-                    memset(command, '\0', sizeof(command));
-                    strcpy(command, "cd");
-                    execlp("/bin/cd", "cd", arg1);
+                    printf("executing cd\n");
+                    //memset(command, '\0', sizeof(command));
+                    //strcpy(command, "cd");
+                    //execlp("/bin/cd", command, arg1, arg2, NULL);
 
+                    
+
+
+                    if(arg1[0] == '.' && arg1[1] == '.' && arg1[2] == '\0')
+                    {
+                        //need to cut off cwd text after last "/"
+
+                        //find last "/"
+                        int length = strlen(cwd);
+
+                        int i = length;
+                        while(cwd[i] != '/')
+                        {
+                            i--;
+                        }
+
+                        cwd[i] = '\0';
+                        chdir(cwd);
+                        //trim cwd
+                    }
+                    else if(strstr(arg1, cwd) == NULL)
+                    {
+                        //arg1 does not contain the cwd
+                        //need to append /arg1 to cwd
+                        strcat(cwd, "/");
+                        strcat(cwd, arg1);
+                        chdir(cwd);
+
+                    }
+                    else
+                    {
+                        //arg1 is sufficient
+                        chdir(arg1);
+                    }
+
+
+                    
+            //        printf("%s\n" cwd())
 
                 }
                 else if(strcmp(command, "dir") == 0) 
                 {
+                    //works
                     memset(command, '\0', sizeof(command));
                     strcpy(command, "ls");
 
@@ -172,7 +223,8 @@ int main(void)
             {
                 // parent process
                 wait(NULL);
-                printf("Child complete\n");
+                printf("[%s]$ ", cwd);
+                //printf("Child complete\n");
             }
         }
 

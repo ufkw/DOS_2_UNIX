@@ -5,4 +5,5 @@ dir
 tokenizes correctly
 
 To fix:
-add proper exec functions
+add print cwd after each executed command
+add error codes when args not accepted
