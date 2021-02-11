@@ -68,8 +68,8 @@ int main(void)
 
            //     printf("input_cpy = |%s|\n", input_cpy);
 
-                const char delim[1] = " ";
-                char * token = strtok(input_cpy, " ");
+                const char delim[2] = " ";
+                char * token = strtok(input_cpy, delim);
                 strcpy(command, token);
                 // printf("1.command: |%s|\n", command);
                 // printf("2.token |%s|\n", token);
@@ -77,10 +77,6 @@ int main(void)
 
                 while(token != NULL)
                 {
-                    // if(count == 0)
-                    // {
-                    //     strcpy(command, token);
-                    // }
                     if(count == 1)
                     {
                         strcpy(arg1, token);
@@ -94,7 +90,7 @@ int main(void)
                 //    printf( "token: %s\n", token );
                     count++;
                     
-                    token = strtok(NULL, " ");
+                    token = strtok(NULL, delim);
                     // strcpy(tmp, input);
                     // token = strtok(tmp, delim);
                  //   printf( "next token: %s\n", token );
@@ -153,7 +149,8 @@ int main(void)
 
 
                     
-            //        printf("%s\n" cwd())
+          
+                    printf("[%s]$ ", cwd);
 
                 }
                 else if(strcmp(command, "dir") == 0) 
@@ -162,17 +159,34 @@ int main(void)
                     memset(command, '\0', sizeof(command));
                     strcpy(command, "ls");
 
-                    execlp("/bin/ls", "ls", NULL);
+                    //execlp("/bin/ls", "ls", NULL);
+
+                    strcat(command," ");
+                    strcat(command, arg1);
+                    strcat(command," ");
+                    strcat(command, arg2);
+                    system(command);
                 }
                 else if(strcmp(command, "type") == 0)
                 {
                     memset(command, '\0', sizeof(command));
                     strcpy(command,"cat");
+
+                    strcat(command," ");
+                    strcat(command, arg1);
+                    strcat(command," ");
+                    strcat(command, arg2);
+                    system(command);
                 }
                 else if(strcmp(command, "del") == 0)
                 {
                     memset(command, '\0', sizeof(command));
                     strcpy(command,"rm");
+                    strcat(command," ");
+                    strcat(command, arg1);
+                    strcat(command," ");
+                    strcat(command, arg2);
+                    system(command);
                    
                 }
                 else if(strcmp(command, "ren") == 0)
